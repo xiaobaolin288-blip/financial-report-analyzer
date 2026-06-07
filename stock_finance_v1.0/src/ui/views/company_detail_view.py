@@ -111,9 +111,17 @@ class CompanyDetailView(QWidget):
         if not code:
             return
         self._current_code = code
-        self._fill_table()
-        self._refresh_kpis()
-        self._refresh_chart()
+        import logging
+        _log = logging.getLogger(__name__)
+        for step_name, step in [
+            ("fill_table", self._fill_table),
+            ("refresh_kpis", self._refresh_kpis),
+            ("refresh_chart", self._refresh_chart),
+        ]:
+            try:
+                step()
+            except Exception:
+                _log.exception("load_company(%s) %s 失败", code, step_name)
 
     def _load_rows(self, report_type: str) -> list[tuple]:
         with get_session() as session:
@@ -157,7 +165,7 @@ class CompanyDetailView(QWidget):
             for card in (self._kpi_revenue, self._kpi_profit, self._kpi_roe, self._kpi_debt):
                 card.set_value("—")
             return
-        *_, latest = rows[-1]
+        latest = rows[-1]
         _, _, rev, profit, roe, _, debt, _ = latest
         self._kpi_revenue.animate_number(rev)
         self._kpi_profit.animate_number(profit)
