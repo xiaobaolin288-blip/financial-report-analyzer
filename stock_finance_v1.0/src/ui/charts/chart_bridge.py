@@ -2,10 +2,16 @@ from __future__ import annotations
 
 import math
 
+import matplotlib
+from matplotlib import ticker
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg, NavigationToolbar2QT
 from matplotlib.figure import Figure
 from PySide6.QtCore import Qt
 from PySide6.QtWidgets import QVBoxLayout, QWidget
+
+# 全局中文字体配置（解决图表标题/图例乱码）
+matplotlib.rcParams["font.sans-serif"] = ["Microsoft YaHei", "SimHei", "SimSun"]
+matplotlib.rcParams["axes.unicode_minus"] = False  # 防止负号显示为方框
 
 
 class ChartWidget(QWidget):
@@ -131,6 +137,9 @@ class ChartWidget(QWidget):
                 leg = ax.legend(facecolor="#151b24", edgecolor="#2a3544", labelcolor="#e8edf4")
                 leg.get_frame().set_alpha(0.9)
 
+        # 中文化 Y 轴刻度
+        ax.yaxis.set_major_formatter(ticker.FuncFormatter(self._cn_tick_formatter))
+
         self._figure.tight_layout()
         self._canvas.draw_idle()
 
@@ -214,6 +223,15 @@ class ChartWidget(QWidget):
             if self._annot and self._annot.get_visible():
                 self._annot.set_visible(False)
                 self._canvas.draw_idle()
+
+    @staticmethod
+    def _cn_tick_formatter(val, _pos=None) -> str:
+        """Y 轴刻度中文格式化：100000000 → 1亿，10000 → 1万。"""
+        if abs(val) >= 1e8:
+            return f"{val / 1e8:.1f}亿"
+        if abs(val) >= 1e4:
+            return f"{val / 1e4:.0f}万"
+        return f"{val:.0f}"
 
     @staticmethod
     def _short_label(text: str, max_len: int = 12) -> str:
