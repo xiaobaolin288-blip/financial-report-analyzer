@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve, Property
-from PySide6.QtWidgets import QFrame, QLabel, QVBoxLayout
+from PySide6.QtCore import QEasingCurve, Property, QPropertyAnimation
+from PySide6.QtWidgets import QFrame, QHBoxLayout, QLabel, QVBoxLayout
 
 
 class _AnimatedLabel(QLabel):
@@ -41,6 +41,8 @@ class _AnimatedLabel(QLabel):
 
 
 class KpiCard(QFrame):
+    """KPI 数值卡片：标题 + 大数值 + 期间 + 同比趋势。"""
+
     def __init__(self, title: str, parent=None) -> None:
         super().__init__(parent)
         self.setObjectName("kpiCard")
@@ -55,19 +57,60 @@ class KpiCard(QFrame):
             """
         )
         layout = QVBoxLayout(self)
+        layout.setSpacing(4)
+        layout.setContentsMargins(12, 8, 12, 8)
+
         self._title = QLabel(title)
         self._title.setStyleSheet("color: #8b9cb3; font-size: 12px;")
+
         self._value = _AnimatedLabel()
         self._value.setStyleSheet("color: #6eb6ff; font-size: 22px; font-weight: 700;")
         self._value.setText("—")
+
+        # 底部行：期间 + 趋势
+        bottom = QHBoxLayout()
+        bottom.setContentsMargins(0, 0, 0, 0)
+
+        self._period = QLabel("")
+        self._period.setStyleSheet("color: #5a6a7a; font-size: 11px;")
+
+        self._trend = QLabel("")
+        self._trend.setStyleSheet("font-size: 11px; font-weight: 600;")
+
+        bottom.addWidget(self._period)
+        bottom.addStretch()
+        bottom.addWidget(self._trend)
+
         layout.addWidget(self._title)
         layout.addWidget(self._value)
+        layout.addLayout(bottom)
 
     def set_value(self, text: str) -> None:
+        """静态设置文本（无动画），用于空数据状态。"""
         self._value.setText(text)
 
     def animate_number(self, value: float | None, *, suffix: str = "", formatter=None) -> None:
+        """带动画设置数值。"""
         if value is None:
             self._value.setText("—")
             return
         self._value.animate_to(float(value), suffix=suffix, formatter=formatter)
+
+    def set_period(self, text: str) -> None:
+        """设置数据期间标签（如 '2025年报'）。"""
+        self._period.setText(text)
+
+    def set_trend(self, delta: float | None, *, suffix: str = "%") -> None:
+        """设置同比变化趋势。
+
+        delta > 0 → 绿色 ▲
+        delta < 0 → 红色 ▼
+        delta is None → 不显示
+        """
+        if delta is None:
+            self._trend.setText("")
+            return
+        arrow = "▲" if delta >= 0 else "▼"  # ▲ or ▼
+        color = "#5ad8a6" if delta >= 0 else "#f56c6c"
+        self._trend.setText(f"{arrow} {abs(delta):.1f}{suffix}")
+        self._trend.setStyleSheet(f"color: {color}; font-size: 11px; font-weight: 600;")
