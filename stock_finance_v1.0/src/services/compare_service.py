@@ -5,13 +5,13 @@ from sqlalchemy.orm import Session
 from src.repositories.indicator_repo import IndicatorRepository
 
 METRIC_LABELS = {
-    "revenue": "营业收入(元)",
-    "net_profit": "净利润(元)",
-    "roe": "ROE(%)",
-    "gross_profit_margin": "毛利率(%)",
-    "debt_asset_ratio": "资产负债率(%)",
+    "revenue": "营业收入（元）",
+    "net_profit": "净利润（元）",
+    "roe": "ROE（%）",
+    "gross_profit_margin": "毛利率（%）",
+    "debt_asset_ratio": "资产负债率（%）",
     "eps": "每股收益",
-    "operating_cash_flow": "经营现金流(元)",
+    "operating_cash_flow": "经营现金流（元）",
 }
 
 

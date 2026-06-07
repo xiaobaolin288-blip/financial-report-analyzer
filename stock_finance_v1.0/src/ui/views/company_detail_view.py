@@ -231,7 +231,7 @@ class CompanyDetailView(QWidget):
         return "年报" if rt == "annual" else "季报"
 
     def _period_label(self, period_str: str) -> str:
-        """从 '2025-12-31' 生成 '2025年报' 或 '2026Q1'。"""
+        """从 '2025-12-31' 生成 '2025年报' 或 '2026年第1季度'。"""
         parts = period_str.split("-")
         if len(parts) < 2:
             return period_str
@@ -240,7 +240,8 @@ class CompanyDetailView(QWidget):
         if month == 12:
             return f"{year}年报"
         q = (month - 1) // 3 + 1
-        return f"{year}Q{q}"
+        cn_q = ["一", "二", "三", "四"][q - 1]
+        return f"{year}年第{cn_q}季度"
 
     # ── 表格 ──
 

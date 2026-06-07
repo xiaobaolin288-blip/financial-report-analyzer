@@ -28,6 +28,8 @@ class ChartWidget(QWidget):
             "QToolButton:hover { background: #1e2836; }"
             "QToolButton:checked { background: #2a3544; color: #6eb6ff; }"
         )
+        # 工具栏按钮中文化（覆盖 Matplotlib 默认英文 tooltip）
+        self._localize_toolbar()
 
         layout.addWidget(self._canvas)
         layout.addWidget(self._toolbar)
@@ -36,6 +38,27 @@ class ChartWidget(QWidget):
         self._annot = None
         self._last_cid = None
         self._current_data = {}  # 存储当前图表数据用于悬浮
+
+    def _localize_toolbar(self) -> None:
+        """将 Matplotlib 导航工具栏按钮提示改为中文。"""
+        tips = {
+            "Home": "复位",
+            "Back": "后退",
+            "Forward": "前进",
+            "Pan": "拖动",
+            "Zoom": "框选缩放",
+            "Subplots": "子图设置",
+            "Save": "保存图片",
+            "Customize": "自定义",
+        }
+        from PySide6.QtWidgets import QToolButton
+        for child in self._toolbar.findChildren(QToolButton):
+            tt = child.toolTip()
+            if tt in tips:
+                child.setToolTip(tips[tt])
+            bt = child.text()
+            if bt in tips:
+                child.setText(tips[bt])
 
     def render(self, chart_type: str, payload: dict) -> None:
         # 先断开旧悬浮事件，防止 stale callback 泄漏
@@ -177,7 +200,10 @@ class ChartWidget(QWidget):
             series_name = self._current_data.get("series_name", "")
             val_text = self._format_value(yi) if not math.isnan(yi) else "—"
 
-            text = f"{label}\n{series_name}: {val_text}"
+            if series_name:
+                text = f"{label}\n{series_name}：{val_text}"
+            else:
+                text = f"{label}\n{val_text}"
 
             self._annot.xy = (xi, yi)
             self._annot.set_text(text)
