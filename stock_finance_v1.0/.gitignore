@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+data/*.db
+data/*.db-journal
+*.log
+logs/*.log
+logs/crash_dump.txt
+!logs/.gitkeep
+.idea/
+.vscode/

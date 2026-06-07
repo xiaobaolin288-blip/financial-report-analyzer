@@ -1,0 +1,16 @@
+database:
+  driver: sqlite
+  # 未来切 PostgreSQL: postgresql://user:pass@host:5432/finance
+  url: sqlite:///data/finance.db
+
+provider:
+  name: akshare
+  request_interval_sec: 0.3
+
+sync:
+  default_years: 5
+
+ui:
+  theme: dark
+  window_width: 1280
+  window_height: 800

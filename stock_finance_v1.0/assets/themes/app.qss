@@ -1,0 +1,133 @@
+/* 深色主题 */
+QMainWindow, QWidget {
+    background-color: #0f1419;
+    color: #e8edf4;
+    font-family: "Microsoft YaHei UI", "Segoe UI", sans-serif;
+    font-size: 13px;
+}
+
+QListWidget {
+    background-color: #151b24;
+    border: none;
+    border-right: 1px solid #1e2836;
+    outline: none;
+    padding: 8px 4px;
+}
+
+QListWidget::item {
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 2px 6px;
+    color: #8b9cb3;
+}
+
+QListWidget::item:selected {
+    background-color: #1e3a5f;
+    color: #6eb6ff;
+}
+
+QListWidget::item:hover:!selected {
+    background-color: #1a2330;
+    color: #c5d0de;
+}
+
+QLineEdit, QComboBox, QSpinBox, QDoubleSpinBox {
+    background-color: #151b24;
+    border: 1px solid #2a3544;
+    border-radius: 6px;
+    padding: 8px 10px;
+    color: #e8edf4;
+    min-height: 20px;
+}
+
+QComboBox::drop-down {
+    border: none;
+    width: 24px;
+}
+
+QPushButton {
+    background-color: #1e3a5f;
+    color: #e8edf4;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background-color: #2a5080;
+}
+
+QPushButton:pressed {
+    background-color: #163052;
+}
+
+QPushButton#primaryBtn {
+    background-color: #2d6cdf;
+}
+
+QPushButton#primaryBtn:hover {
+    background-color: #3d8bfd;
+}
+
+QPushButton#dangerBtn {
+    background-color: #5c2a2a;
+}
+
+QTableWidget {
+    background-color: #151b24;
+    border: 1px solid #1e2836;
+    border-radius: 8px;
+    gridline-color: #1e2836;
+    selection-background-color: #1e3a5f;
+}
+
+QHeaderView::section {
+    background-color: #1a2330;
+    color: #8b9cb3;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid #2a3544;
+}
+
+QLabel#titleLabel {
+    font-size: 20px;
+    font-weight: 700;
+    color: #e8edf4;
+}
+
+QLabel#subtitleLabel {
+    color: #8b9cb3;
+}
+
+QProgressBar {
+    border: 1px solid #2a3544;
+    border-radius: 6px;
+    background: #151b24;
+    text-align: center;
+    color: #e8edf4;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #2d6cdf, stop:1 #5ad8a6);
+    border-radius: 5px;
+}
+
+QGroupBox {
+    border: 1px solid #1e2836;
+    border-radius: 8px;
+    margin-top: 12px;
+    padding-top: 8px;
+    color: #8b9cb3;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 12px;
+    padding: 0 6px;
+}
+
+QScrollArea {
+    border: none;
+    background: transparent;
+}
