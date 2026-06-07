@@ -90,10 +90,15 @@ class KpiCard(QFrame):
         self._value.setText(text)
 
     def animate_number(self, value: float | None, *, suffix: str = "", formatter=None) -> None:
-        """带动画设置数值。"""
+        """带动画设置数值。负值自动标红色。"""
         if value is None:
+            self._value.setStyleSheet("color: #5a6a7a; font-size: 22px; font-weight: 700;")
             self._value.setText("—")
             return
+        if value < 0:
+            self._value.setStyleSheet("color: #f56c6c; font-size: 22px; font-weight: 700;")
+        else:
+            self._value.setStyleSheet("color: #6eb6ff; font-size: 22px; font-weight: 700;")
         self._value.animate_to(float(value), suffix=suffix, formatter=formatter)
 
     def set_period(self, text: str) -> None:

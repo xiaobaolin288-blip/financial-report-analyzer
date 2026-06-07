@@ -80,6 +80,10 @@ QTableWidget {
     border-radius: 8px;
     gridline-color: #1e2836;
     selection-background-color: #1e3a5f;
+    color: #c5d0de;
+}
+QTableWidget::item {
+    /* 不设 color，让 setForeground() 生效 */
 }
 
 QHeaderView::section {
