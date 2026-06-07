@@ -11,5 +11,3 @@ logs/crash_dump.txt
 !logs/.gitkeep
 .idea/
 .vscode/
-node_modules/
-package-lock.json
