@@ -21,6 +21,8 @@ _COLUMN_ALIASES: dict[str, list[str]] = {
     "operating_cash_flow": [
         "经营活动产生的现金流量净额",
         "经营活动现金流量净额",
+        "每股经营现金流",
+        "每股经营性现金流",
     ],
 }
 
@@ -35,13 +37,24 @@ def _pick_column(df: pd.DataFrame, field: str) -> str | None:
 def _to_float(value) -> float | None:
     if value is None or (isinstance(value, float) and pd.isna(value)):
         return None
+    # bool 是 int 的子类，但 akshare 用 False 表示"无数据"
+    if isinstance(value, bool):
+        return None
     if isinstance(value, (int, float)):
         return float(value)
     text = str(value).strip().replace(",", "").replace("%", "")
     if text in {"", "-", "--", "nan", "None"}:
         return None
+    # 处理中文单位：亿、万
+    multiplier = 1.0
+    if text.endswith("亿"):
+        multiplier = 1e8
+        text = text[:-1]
+    elif text.endswith("万"):
+        multiplier = 1e4
+        text = text[:-1]
     try:
-        return float(text)
+        return float(text) * multiplier
     except ValueError:
         return None
 
