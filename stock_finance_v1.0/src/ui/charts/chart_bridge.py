@@ -38,8 +38,12 @@ class ChartWidget(QWidget):
         self._current_data = {}  # 存储当前图表数据用于悬浮
 
     def render(self, chart_type: str, payload: dict) -> None:
+        # 先断开旧悬浮事件，防止 stale callback 泄漏
+        self._disconnect_hover()
         self._figure.clear()
         self._current_data = payload
+        self._annot = None
+        self._ax_for_hover = None
 
         ax = self._figure.add_subplot(111)
         ax.set_facecolor("#151b24")
@@ -111,13 +115,16 @@ class ChartWidget(QWidget):
         if chart_type != "bar" and categories:
             self._setup_hover()
 
-    def _setup_hover(self) -> None:
-        """设置鼠标悬浮标注。"""
+    def _disconnect_hover(self) -> None:
+        """断开旧悬浮事件，避免 stale callback 在已销毁的 axes 上触发。"""
         if self._last_cid is not None:
             try:
                 self._canvas.mpl_disconnect(self._last_cid)
             except Exception:
                 pass
+            self._last_cid = None
+
+    def _setup_hover(self) -> None:
 
         self._annot = self._ax_for_hover.annotate(
             "", xy=(0, 0), xytext=(12, 12),

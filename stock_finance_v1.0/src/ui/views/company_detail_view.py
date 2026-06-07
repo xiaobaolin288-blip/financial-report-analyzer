@@ -204,47 +204,6 @@ class CompanyDetailView(QWidget):
                 for report, ind in pairs
             ]
 
-    @staticmethod
-    def _calc_trend(current_period: str, current_value: float | None, rows: list[tuple]) -> float | None:
-        """计算同比变化率。
-
-        找到与 current_period 同年上期（季报）或上年同期（年报）的数据，
-        返回 (current - prev) / abs(prev) * 100，无数据则返回 None。
-        """
-        if current_value is None or current_value == 0:
-            return None
-        # 从 current_period 解析年份和月份
-        parts = current_period.split("-")
-        if len(parts) < 2:
-            return None
-        year = int(parts[0])
-        month = int(parts[1]) if len(parts) > 1 else 12
-        # 年报 (12-31) → 找上年年报
-        if month == 12:
-            target_year = year - 1
-            target_month = 12
-        else:
-            target_year = year - 1
-            target_month = month
-
-        prev_value = None
-        for row in rows:
-            rp = row[0]  # report_period str
-            try:
-                rp_parts = rp.split("-")
-                rp_year = int(rp_parts[0])
-                rp_month = int(rp_parts[1]) if len(rp_parts) > 1 else 12
-            except (ValueError, IndexError):
-                continue
-            if rp_year == target_year and rp_month == target_month:
-                prev_value = row[2]  # revenue 在索引2，但这取决于我们比较的字段...
-                break
-
-        # 注意：row[2] 是 revenue，需要根据当前字段重新取值
-        # 这里简化处理：重新从 rows 找到对应字段的值
-        # 实际在 _refresh_kpis 中根据不同字段分别处理
-        return None  # 由调用方根据具体字段计算
-
     def _find_prev_value(self, rows: list[tuple], current_period: str, field_idx: int) -> float | None:
         """在 rows 中找到同一字段上年同期的值。"""
         parts = current_period.split("-")
@@ -348,9 +307,15 @@ class CompanyDetailView(QWidget):
 
     def _on_report_type_changed(self) -> None:
         """报告类型切换时刷新表格、KPI 和图表。"""
-        self._fill_table()
-        self._refresh_kpis()
-        self._refresh_chart()
+        for step_name, step in [
+            ("fill_table", self._fill_table),
+            ("refresh_kpis", self._refresh_kpis),
+            ("refresh_chart", self._refresh_chart),
+        ]:
+            try:
+                step()
+            except Exception:
+                _log.exception("_on_report_type_changed %s 失败", step_name)
 
     # ── 图表 ──
 
